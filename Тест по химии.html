@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест по химии: Глава IV. Химические реакции</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7f6;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 850px;
+            margin: auto;
+            background: #fff;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        h1 { text-align: center; color: #2c3e50; margin-bottom: 10px; }
+        h2 { text-align: center; color: #7f8c8d; font-size: 1.1em; margin-bottom: 30px; }
+        .section-info {
+            background: #e8f4fd;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.9em;
+            margin-bottom: 20px;
+            border-left: 5px solid #3498db;
+        }
+        .question-block {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #edf2f7;
+            border-radius: 10px;
+            transition: 0.3s;
+        }
+        .question-block:hover { border-color: #3498db; }
+        .question-text { font-weight: bold; font-size: 1.1em; color: #2d3748; margin-bottom: 15px; }
+        label { display: block; margin: 10px 0; cursor: pointer; padding: 8px; border-radius: 5px; }
+        label:hover { background: #f0f7ff; }
+        input[type="radio"] { margin-right: 12px; transform: scale(1.2); }
+        .btn-wrapper { text-align: center; margin-top: 40px; }
+        button {
+            background: #3498db; color: white; border: none; padding: 15px 40px;
+            font-size: 18px; border-radius: 8px; cursor: pointer; transition: 0.3s;
+        }
+        button:hover { background: #2980b9; transform: translateY(-2px); }
+        #result-box {
+            margin-top: 40px; padding: 30px; display: none;
+            text-align: center; border-radius: 12px;
+        }
+        .score-val { font-size: 48px; font-weight: bold; display: block; }
+        .correct-hint { color: #27ae60; display: none; font-weight: bold; margin-top: 10px; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Глава IV. Химические реакции</h1>
+    <h2>Тест по параграфам §18 — §22</h2>
+    
+    <div class="section-info">
+
+        Правила: 20 вопросов. За верный ответ — 0.5 балла. Итоговая оценка по 10-балльной шкале.
+    </div>
+
+    <form id="quizForm">
+        <div id="questions-container"></div>
+        <div class="btn-wrapper">
+            <button type="button" onclick="showResults()">Проверить работу</button>
+        </div>
+    </form>
+
+    <div id="result-box"></div>
+</div>
+
+<script>
+    const quizData = [
+        // §18
+        { q: "К какому типу относится реакция: Zn + H₂SO₄ → ZnSO₄ + H₂↑?", a: ["Обмена", "Замещения", "Разложения"], c: 1 },
+        { q: "Реакции, протекающие с изменением степени окисления атомов, называются:", a: ["Ионными", "Окислительно-восстановительными", "Экзотермическими"], c: 1 },
+        { q: "Признаком необратимости реакции ионного обмена является:", a: ["Образование осадка или газа", "Изменение цвета индикатора", "Нагревание раствора"], c: 0 },
+        { q: "Реакция соединения — это реакция, в которой:", a: ["Из двух веществ образуется два новых", "Из одного вещества образуется несколько новых", "Из нескольких веществ образуется одно сложное"], c: 2 },
+        // §19
+        { q: "Уравнение реакции, в котором указан тепловой эффект, называется:", a: ["Термохимическим", "Кинетическим", "Равновесным"], c: 0 },
+        { q: "В экзотермических реакциях энергия:", a: ["Поглощается", "Выделяется", "Не изменяется"], c: 1 },
+        { q: "Какое утверждение о катализаторах верно?", a: ["Увеличивают выход продукта", "Смещают химическое равновесие", "Изменяют механизм реакции, снижая энергию активации"], c: 2 },
+        { q: "Какое из условий соответствует эндотермической реакции?", a: ["Горение метана", "Разложение карбоната кальция при нагревании", "Нейтрализация кислоты щелочью"], c: 1 },
+        // Замененный вопрос 9 (без дельты H)
+        { q: "Как называется минимальный избыток энергии, которым должны обладать частицы для того, чтобы их столкновение привело к химической реакции?", a: ["Энергия ионизации", "Энергия активации", "Энергия связи"], c: 1 },
+        { q: "В каких единицах измеряется скорость химической реакции?", a: ["моль/л", "моль/(л · с)", "г/с"], c: 1 },
+        // §21
+        { q: "Согласно закону действующих масс, скорость реакции зависит от:", a: ["Температуры", "Давления", "Концентрации реагирующих веществ"], c: 2 },
+
+        { q: "Как изменится скорость реакции при повышении температуры на каждые 10°C (правило Вант-Гоффа)?", a: ["Возрастет в 2–4 раза", "Уменьшится в 2 раза", "Не изменится"], c: 0 },
+        { q: "Биологические катализаторы белковой природы называются:", a: ["Ингибиторы", "Ферменты", "Инициаторы"], c: 1 },
+        { q: "Ингибиторы — это вещества, которые:", a: ["Ускоряют реакцию", "Замедляют реакцию", "Смещают равновесие"], c: 1 },
+        { q: "Для гетерогенной реакции (например, горение угля) скорость зависит от:", a: ["Формы сосуда", "Площади поверхности соприкосновения реагентов", "Объема воздуха"], c: 1 },
+        // §22
+        { q: "Химическое равновесие наступает, когда:", a: ["Концентрации веществ становятся равны", "Скорость прямой реакции равна скорости обратной", "Реакция полностью прекращается"], c: 1 },
+        { q: "Куда сместится равновесие системы N₂ + 3H₂ ⇌ 2NH₃ + Q при охлаждении?", a: ["Вправо (в сторону продукта)", "Влево (в сторону реагентов)", "Не сместится"], c: 0 },
+        { q: "Как влияет повышение давления на равновесие реакции, где объемы газов слева и справа равны?", a: ["Смещает вправо", "Смещает влево", "Не влияет"], c: 2 },
+        { q: "Принцип Ле Шателье гласит: если на систему в равновесии воздействовать извне, то:", a: ["Равновесие разрушится навсегда", "Система сместит равновесие так, чтобы ослабить воздействие", "Скорость реакции резко упадет"], c: 1 },
+        { q: "Влияет ли катализатор на положение химического равновесия?", a: ["Да, смещает вправо", "Да, смещает влево", "Нет, не влияет"], c: 2 }
+    ];
+
+    const container = document.getElementById('questions-container'
+
+);
+
+    // Генерация вопросов
+    quizData.forEach((data, index) => {
+        const div = document.createElement('div');
+        div.className = 'question-block';
+        div.innerHTML = `
+            <div class="question-text">${index + 1}. ${data.q}</div>
+            ${data.a.map((ans, i) => `
+                <label>
+                    <input type="radio" name="q${index}" value="${i}"> ${ans}
+                </label>
+            `).join('')}
+            <div id="hint${index}" class="correct-hint">Правильный ответ: ${data.a[data.c]}</div>
+        `;
+        container.appendChild(div);
+    });
+
+    function showResults() {
+        let score = 0;
+        const form = document.getElementById('quizForm');
+        
+        quizData.forEach((data, index) => {
+            const selected = form.querySelector(`input[name="q${index}"]:checked`);
+            const hint = document.getElementById(`hint${index}`);
+            hint.style.display = 'block'; 
+            
+            if (selected && parseInt(selected.value) === data.c) {
+                score += 0.5;
+            }
+        });
+
+        const resultBox = document.getElementById('result-box');
+        resultBox.style.display = 'block';
+        
+        const finalGrade = Math.round(score);
+        
+        let color = "#e74c3c"; 
+        let text = "Нужно еще подучить главу IV.";
+        
+        if (finalGrade >= 9) { color = "#27ae60"; text = "Великолепно! Вы мастер химических реакций!"; }
+        else if (finalGrade >= 7) { color = "#2980b9"; text = "Хороший результат! Большинство тем усвоено."; }
+        else if (finalGrade >= 4) { color = "#f39c12"; text = "Удовлетворительно. Рекомендуется повторить теорию."; }
+
+        resultBox.style.backgroundColor = color + "22"; 
+        resultBox.style.border = `2px solid ${color}`;
+        resultBox.style.color = color;
+
+        resultBox.innerHTML = `
+            <h3>Ваш результат:</h3>
+            <span class="score-val">${score} / 10.0</span>
+            <p><strong>Оценка по 10-балльной системе: ${finalGrade}</strong></p>
+            <p>${text}</p>
+            <button onclick="window.location.reload()" style="background:${color}; margin-top:15px; padding:10px 20px; font-size:14px;">Пройти заново</button>
+        `;
+
+        const inputs = form.querySelectorAll('input');
+        inputs.forEach(input => input.disabled = true);
+        
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }
+</script>
+
+</body>
+</html>
